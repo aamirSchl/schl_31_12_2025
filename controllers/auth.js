@@ -94,7 +94,6 @@ const registerUser = async (req, res) => {
 };
 
 // Dashboard API
-
 const getDashboardStats = async (req, res) => {
   try {
     // MOCK DATA (as provided)

@@ -141,7 +141,60 @@ const getStudents = async (req, res) => {
   }
 };
 
+// UPDATE Student
+const updateStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check student exists
+    const student = await Student.findById(id);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    // Prevent duplicate email / admissionNo
+    if (req.body.email || req.body.admissionNo) {
+      const duplicate = await Student.findOne({
+        _id: { $ne: id },
+        $or: [
+          { email: req.body.email },
+          { admissionNo: req.body.admissionNo },
+        ],
+      });
+
+      if (duplicate) {
+        return res.status(409).json({
+          success: false,
+          message: "Email or Admission No already exists",
+        });
+      }
+    }
+
+    const updatedStudent = await Student.findByIdAndUpdate(
+      id,
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Student updated successfully",
+      data: updatedStudent,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
 module.exports = {
   addStudent,
   getStudents,
+  updateStudent,
 };

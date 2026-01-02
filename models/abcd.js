@@ -7,6 +7,7 @@ export const mockUser = {
   role: 'ADMIN',
 }
 
+// DONE API
 export const mockCourses = [
   {
     id: '1',
@@ -36,7 +37,7 @@ export const mockCourses = [
     isActive: true,
   },
 ]
-
+// DONE API
 export const mockStudents = [
   {
     id: '1',
@@ -118,6 +119,7 @@ export const mockStudents = [
   },
 ]
 
+
 export const mockFeeStructures = [
   {
     id: '1',
@@ -195,7 +197,7 @@ export const mockFeeStructures = [
     ],
   },
 ]
-
+// DONE API
 export const mockTransactions = [
   {
     id: '1',
@@ -270,7 +272,7 @@ export const mockNotifications = [
     sentAt: '2025-12-30',
   },
 ]
-
+// DONE API
 export const mockDashboardStats = {
   totalStudents: 4,
   activeStudents: 4,

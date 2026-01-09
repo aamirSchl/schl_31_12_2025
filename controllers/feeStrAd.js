@@ -2,7 +2,9 @@ const FeeStructure = require("./../models/feeStrAd");
 
 const createFeeStructure = async (req, res) => {
   try {
+
     const {
+      studentId,
       totalFee,
       discount = 0,
       discountReason,
@@ -10,10 +12,10 @@ const createFeeStructure = async (req, res) => {
       numberOfInstallments,
     } = req.body;
 
-    if (!totalFee || !paymentMode) {
+    if (!studentId || !totalFee || !paymentMode) {
       return res.status(400).json({
         success: false,
-        message: "Total Fee and Payment Mode are required",
+        message: "Student ID, Total Fee and Payment Mode are required",
       });
     }
 
@@ -28,7 +30,9 @@ const createFeeStructure = async (req, res) => {
       });
     }
 
+
     const feeStructure = await FeeStructure.create({
+      studentId,
       totalFee,
       discount,
       discountReason,

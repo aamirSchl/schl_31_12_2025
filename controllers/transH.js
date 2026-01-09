@@ -61,4 +61,46 @@ const getTransactionHistory = async (req, res) => {
   }
 };
 
-module.exports = { getTransactionHistory };
+const addTransaction = async (req, res) => {
+  try {
+    const {
+      studentId,
+      student,
+      amount,
+      paymentMethod,
+      transactionRef,
+      remarks,
+      processedByUser
+    } = req.body;
+
+    if (!studentId || !student || !amount || !paymentMethod || !transactionRef || !processedByUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Required fields are missing",
+      });
+    }
+
+    const transaction = await Transaction.create({
+      studentId,
+      student,
+      amount,
+      paymentMethod,
+      transactionRef,
+      remarks,
+      processedByUser
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Transaction added successfully",
+      data: transaction,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = { getTransactionHistory, addTransaction };

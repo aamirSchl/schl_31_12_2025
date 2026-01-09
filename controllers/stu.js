@@ -1,4 +1,5 @@
-const Student = require("./../models/stu");
+const FeeStructure = require("../models/feeStrAd");
+const Student = require("../models/stu");
 
 // const addStudent = async (req, res) => {
 //   try {
@@ -98,13 +99,19 @@ const addStudent = async (req, res) => {
       guardianPhone,
       courseId,
       courseName,
+      // Fee structure fields
+      totalFee,
+      discount = 0,
+      discountReason,
+      paymentMode,
+      numberOfInstallments
     } = req.body;
 
     // Required validation
-    if (!firstName || !lastName || !email || !phone || !courseId) {
+    if (!firstName || !lastName || !email || !phone || !courseId || !totalFee || !paymentMode) {
       return res.status(400).json({
         success: false,
-        message: "Required fields are missing",
+        message: "Required fields are missing (student or fee structure)",
       });
     }
 
@@ -129,6 +136,7 @@ const addStudent = async (req, res) => {
 
     const admissionNo = `FS${year}${nextNumber}`;
 
+    // Create student
     const student = await Student.create({
       admissionNo,
       firstName,
@@ -148,14 +156,27 @@ const addStudent = async (req, res) => {
       admissionDate: new Date(),  // ✅ dynamic
     });
 
+    // Create fee structure for this student
+    const feeStructure = await FeeStructure.create({
+      studentId: student._id,
+      totalFee,
+      discount,
+      discountReason,
+      paymentMode,
+      numberOfInstallments: paymentMode === "INSTALLMENT" ? numberOfInstallments : null
+    });
+
     res.status(201).json({
       success: true,
-      message: "Student added successfully",
+      message: "Student and fee structure added successfully",
       data: {
-        id: student._id,
-        admissionNo: student.admissionNo,
-        status: student.status,
-        admissionDate: student.admissionDate,
+        student: {
+          id: student._id,
+          admissionNo: student.admissionNo,
+          status: student.status,
+          admissionDate: student.admissionDate,
+        },
+        feeStructure
       },
     });
   } catch (error) {
@@ -209,9 +230,27 @@ const getStudents = async (req, res) => {
       Student.countDocuments(query),
     ]);
 
+    // Attach feeStatus for each student
+    const studentsWithFeeStatus = await Promise.all(
+      students.map(async (student) => {
+        const feeStructure = await FeeStructure.findOne({ studentId: student._id });
+        let feeStatus = "UNPAID";
+        if (feeStructure) {
+          } if (feeStructure.paymentMode === 'ONE_TIME' ) {
+            feeStatus = "PAID";
+          } else {
+            feeStatus = "PARTIAL";
+          }
+        return {
+          ...student.toObject(),
+          feeStatus,
+        };
+      })
+    );
+
     res.status(200).json({
       success: true,
-      data: students,
+      data: studentsWithFeeStatus,
       pagination: {
         total,
         page: Number(page),
@@ -285,7 +324,7 @@ const getStudentById = async (req, res) => {
     const { id } = req.params;
 
     // Validate ObjectId
-    if (id) {
+    if (!id) {
       return res.status(400).json({
         success: false,
         message: "Invalid student id",
@@ -302,7 +341,7 @@ const getStudentById = async (req, res) => {
     }
 
     // 2️⃣ Get Fee Structure using studentId
-    const feeStructure = await feeStructure.findOne({ studentId: id });
+    const feeStructure = await FeeStructure.findOne({ studentId: id });
 
     res.status(200).json({
       success: true,

@@ -1,11 +1,22 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const authRoutes = require("./routes/auth");
 
 const app = express();
 
+// CORS Configuration
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200
+};
+
 // Middleware
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // MongoDB Connection
@@ -29,7 +40,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 
 // Server
-const PORT = 5000;
+const PORT = 5050;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

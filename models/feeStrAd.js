@@ -31,6 +31,28 @@ const feeStructureSchema = new mongoose.Schema(
         return this.paymentMode === "INSTALLMENT";
       },
     },
+    installmentSummary: {
+      totalInstallments: {
+        type: Number,
+        default: 0,
+      },
+      paidInstallments: {
+        type: Number,
+        default: 0,
+      },
+      pendingInstallments: {
+        type: Number,
+        default: 0,
+      },
+      paidAmount: {
+        type: Number,
+        default: 0,
+      },
+      pendingAmount: {
+        type: Number,
+        default: 0,
+      },
+    },
   },
   { timestamps: true }
 );

@@ -40,7 +40,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 
 // Server
-const PORT = 5050;
+const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

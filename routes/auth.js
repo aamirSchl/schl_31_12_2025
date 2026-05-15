@@ -14,6 +14,9 @@ const {
 } = require("../controllers/transH");
 const { createFeeStructure } = require("../controllers/feeStrAd");
 
+const { createOrder, verifyPayment } = require("../controllers/razorpay");
+
+
 const router = express.Router();
 
 
@@ -33,5 +36,8 @@ router.post("/addCourse", addCourse);
 router.post("/fee-structure", createFeeStructure);
 router.put("/:id", updateStudent);
 router.get("/:id", getStudentById);
+
+router.post("/create-order", createOrder);
+router.post("/verify-payment", verifyPayment);
 
 module.exports = router;
